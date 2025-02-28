@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Laboral</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+        .respuesta {
+            background: #f4f4f4;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chat Laboral</h2>
+    <textarea id="pregunta" placeholder="Escribe tu consulta aquí..."></textarea>
+    <br>
+    <button onclick="enviarPregunta()">Enviar</button>
+    <div id="respuesta" class="respuesta"></div>
+
+    <script>
+        async function enviarPregunta() {
+            const pregunta = document.getElementById("pregunta").value;
+            const respuestaDiv = document.getElementById("respuesta");
+            respuestaDiv.innerHTML = "Cargando...";
+
+            try {
+                const response = await fetch("https://pruebados-production.up.railway.app/chat-laboral", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ query: pregunta })
+                });
+                
+                if (!response.ok) throw new Error("Error en la respuesta del servidor");
+                
+                const data = await response.json();
+                respuestaDiv.innerHTML = data.response;
+            } catch (error) {
+                respuestaDiv.innerHTML = "Error al obtener respuesta. Intenta de nuevo.";
+            }
+        }
+    </script>
+</body>
+</html>
